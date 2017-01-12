@@ -6,8 +6,6 @@
 using System;
 using System.Xml.Serialization;
 
-using MoonSharp.Interpreter;
-
 using Newtonsoft.Json;
 
 #endregion
@@ -19,7 +17,6 @@ namespace ManagedClient
     /// </summary>
     [Serializable]
     [XmlRoot("subfield")]
-    [MoonSharpUserData]
     public class SubField
     {
         #region Properties
@@ -72,7 +69,7 @@ namespace ManagedClient
                         throw new ArgumentException
                             (
                                 "Contains delimiter",
-                                "value"
+                                "Text"
                             );
                     }
                     _text = value;

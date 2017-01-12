@@ -1,15 +1,16 @@
 ﻿/* RecordField.cs - поле библиографической записи
+ * Ars Magna project, http://arsmagna.ru
  */
 
 #region Using directives
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
-
-using MoonSharp.Interpreter;
 
 using Newtonsoft.Json;
 
@@ -22,7 +23,7 @@ namespace ManagedClient
     /// </summary>
     [Serializable]
     [XmlRoot("field")]
-    [MoonSharpUserData]
+    [DebuggerDisplay("Tag={Tag} Text={Text}")]
     public sealed class RecordField
     {
         #region Constants
@@ -92,7 +93,7 @@ namespace ManagedClient
                             throw new ArgumentException
                                 (
                                     "Contains delimiter",
-                                    "value"
+                                    "Text"
                                 );
                         }
                         SetSubFields(value);
@@ -683,7 +684,7 @@ namespace ManagedClient
         }
 
         /// <summary>
-        /// Парсинг текстового проедставления поля
+        /// Парсинг текстового представления поля
         /// </summary>
         /// <param name="tag"></param>
         /// <param name="body"></param>

@@ -145,6 +145,9 @@ namespace ManagedClient
                 .GetFieldText();
         }
 
+        /// <summary>
+        /// Текст всех полей с указанным тегом.
+        /// </summary>
         public string[] FMA ( string tag )
         {
             return Fields
@@ -152,6 +155,9 @@ namespace ManagedClient
                 .GetFieldText ();
         }
 
+        /// <summary>
+        /// Текст первого подполя с указанным тегом и кодом.
+        /// </summary>
         public string FM(string tag, char code)
         {
             return Fields
@@ -161,6 +167,9 @@ namespace ManagedClient
                 .GetSubFieldText();
         }
 
+        /// <summary>
+        /// Текст всех подполей с указанным тегом и кодом.
+        /// </summary>
         public string[] FMA ( string tag, char code )
         {
             return Fields
@@ -169,12 +178,18 @@ namespace ManagedClient
                 .GetSubFieldText ();
         }
 
+        /// <summary>
+        /// Форматирование поля.
+        /// </summary>
         public string FR ( string format )
         {
             FieldReference fr = new FieldReference(format);
             return fr.FormatSingle ( this );
         }
 
+        /// <summary>
+        /// Форматирование поля.
+        /// </summary>
         public string FR ( string pre, string format, string post )
         {
             string result = FR ( format );
@@ -183,11 +198,17 @@ namespace ManagedClient
                 : ( pre + result + post );
         }
 
+        /// <summary>
+        /// Результат расформатирования пустой?
+        /// </summary>
         public bool FRE ( string format )
         {
             return string.IsNullOrEmpty ( FR ( format ) );
         }
 
+        /// <summary>
+        /// Форматирование поля.
+        /// </summary>
         public string[] FRA ( string format )
         {
             FieldReference fr = new FieldReference(format);
@@ -240,6 +261,9 @@ namespace ManagedClient
             return result.ToString();
         }
 
+        /// <summary>
+        /// Разбор записи в клиентском представлении.
+        /// </summary>
         public static IrbisRecord Parse 
             ( 
                 string text,
@@ -247,9 +271,29 @@ namespace ManagedClient
             )
         {
             string[] lines = text.Split ( '\x1F' );
-            return Parse ( lines, skipLines );
+            IrbisRecord result = Parse ( lines, skipLines );
+
+            if (result.Fields.Count == 0)
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes(text);
+                string dump = Utilities.DumpBytes(bytes);
+                string message = string.Format
+                    (
+                        "Empty record in IrbisRecord.Parse:{0}{1}",
+                        Environment.NewLine,
+                        dump
+                    );
+
+                throw new ApplicationException(message);
+            }
+
+            return result;
         }
 
+        /// <summary>
+        /// Разбор записи в клиентском представлении и слияние
+        /// с уже имеющимися полями.
+        /// </summary>
         public IrbisRecord MergeParse
             (
                 string[] text,
@@ -387,6 +431,9 @@ namespace ManagedClient
             return this;
         }
 
+        /// <summary>
+        /// Установка поля.
+        /// </summary>
         public IrbisRecord SetField
             (
                 string tag,
@@ -406,6 +453,9 @@ namespace ManagedClient
             return this;
         }
 
+        /// <summary>
+        /// Установка подполя.
+        /// </summary>
         public IrbisRecord SetSubField
             (
                 string tag,
@@ -428,6 +478,9 @@ namespace ManagedClient
             return this;
         }
 
+        /// <summary>
+        /// Установка подполя.
+        /// </summary>
         public IrbisRecord SetSubField
             (
                 string tag,
@@ -476,6 +529,9 @@ namespace ManagedClient
             return this;
         }
 
+        /// <summary>
+        /// Удаление поля.
+        /// </summary>
         public IrbisRecord RemoveField
             (
                 string tag,
@@ -498,6 +554,9 @@ namespace ManagedClient
             return this;
         }
 
+        /// <summary>
+        /// Есть хотя бы одно поле с указанными тегами?
+        /// </summary>
         public bool HaveField
             (
                 params string[] tags
@@ -506,6 +565,9 @@ namespace ManagedClient
             return (Fields.GetField(tags).Length != 0);
         }
 
+        /// <summary>
+        /// Нет ни одного поля с указанными тегами?
+        /// </summary>
         public bool HaveNotField
             (
                 params string[] tags
@@ -531,6 +593,13 @@ namespace ManagedClient
             return result;
         }
 
+        /// <summary>
+        /// Сравнение двух записей.
+        /// </summary>
+        /// <param name="record1"></param>
+        /// <param name="record2"></param>
+        /// <param name="verbose"></param>
+        /// <returns></returns>
         public static int Compare
             (
                 IrbisRecord record1,
@@ -703,9 +772,12 @@ namespace ManagedClient
             return result;
         }
 
+        /// <summary>
+        /// Разбор 2709.
+        /// </summary>
         public static IrbisRecord ReadIso
             (
-                Stream strm,
+                Stream stream,
                 Encoding enc
             )
         {
@@ -714,27 +786,27 @@ namespace ManagedClient
             byte[] marker = new byte[5];
 
             // Считываем длину записи
-            if (strm.Read(marker, 0, 5) != 5)
+            if (stream.Read(marker, 0, 5) != 5)
             {
                 return null;
             }
-            int reclen = _ToInt(marker, 0, 5);
-            byte[] record = new byte[reclen];
-            int need = reclen - 5;
+            int recordLength = _ToInt(marker, 0, 5);
+            byte[] record = new byte[recordLength];
+            int need = recordLength - 5;
             // А затем и ее остаток
-            if (strm.Read(record, 5, need) != need)
+            if (stream.Read(record, 5, need) != need)
             {
                 return null;
             }
 
             // простая проверка, что мы имеем дело с нормальной ISO-записью
-            if (record[reclen - 1] != RecordDelimiter)
+            if (record[recordLength - 1] != RecordDelimiter)
             {
                 return null;
             }
 
             // Превращаем в Unicode
-            char[] chars = enc.GetChars(record, 0, reclen);
+            char[] chars = enc.GetChars(record, 0, recordLength);
             int baseAddress = _ToInt(record, 12, 5) - 1;
             int start = baseAddress;
 
@@ -744,7 +816,7 @@ namespace ManagedClient
                 // находим следующее поле
                 // Если нарвались на разделитель, заканчиваем
                 if ((record[dic] == FieldDelimiter)
-                     || (start > (reclen - 4)))
+                     || (start > (recordLength - 4)))
                 {
                     break;
                 }
@@ -917,7 +989,9 @@ namespace ManagedClient
                 .AddRange
                 (
                     body
+// ReSharper disable ConvertClosureToMethodGroup
                     .Select(line => _ParseLine(line))
+// ReSharper restore ConvertClosureToMethodGroup
                     .Where(item => item != null)
                 );
 
@@ -963,10 +1037,12 @@ namespace ManagedClient
         #region Object members
 
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="System.String" />
+        /// that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="System.String" />
+        /// that represents this instance.
         /// </returns>
         public override string ToString()
         {

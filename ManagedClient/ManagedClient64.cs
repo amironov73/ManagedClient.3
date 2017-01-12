@@ -17,9 +17,9 @@ using System.Net.Sockets;
 using System.IO;
 using System.Text.RegularExpressions;
 
-using JetBrains.Annotations;
+//using JetBrains.Annotations;
 
-using MoonSharp.Interpreter;
+//using MoonSharp.Interpreter;
 
 #if !PocketPC
 using System.Runtime.Serialization.Formatters.Binary;
@@ -39,9 +39,9 @@ namespace ManagedClient
     /// <summary>
     /// Клиент для общения с сервером
     /// </summary>
-    [PublicAPI]
+    //[PublicAPI]
     [Serializable]
-    [MoonSharpUserData]
+    //[MoonSharpUserData]
     public class ManagedClient64
         : IDisposable
     {
@@ -3903,7 +3903,7 @@ TryAgain:
                     forEveryRepeat
                 )
                 .Where(_ => !string.IsNullOrEmpty(_))
-                .Select(int.Parse)
+                .Select(_ => int.Parse(_))
                 .ToArray();
         }
 
@@ -3952,7 +3952,7 @@ TryAgain:
                     forEveryRepeat
                 )
                 .Where(_ => !string.IsNullOrEmpty(_))
-                .Select(int.Parse)
+                .Select(_ => int.Parse(_))
                 .ToArray();
         }
 
