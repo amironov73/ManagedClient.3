@@ -8,10 +8,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 
-using CM=System.Configuration.ConfigurationManager;
+using CM = System.Configuration.ConfigurationManager;
 
 #endregion
 
@@ -81,7 +82,7 @@ namespace ManagedClient
             (
                 this IEnumerable<T> sequence
             )
-            where T: class
+            where T : class
         {
             return sequence.Where(value => value != null);
         }
@@ -370,8 +371,8 @@ namespace ManagedClient
             {
                 if (String.Equals
                     (
-                        value, 
-                        s, 
+                        value,
+                        s,
                         StringComparison.CurrentCultureIgnoreCase
                     ))
                 {
@@ -609,8 +610,32 @@ namespace ManagedClient
 
             while (true)
             {
-                byte[] buffer = new byte[10 * 1024];
+                byte[] buffer = new byte[32 * 1024];
                 int read = stream.Read(buffer, 0, buffer.Length);
+                if (read <= 0)
+                {
+                    break;
+                }
+                result.Write(buffer, 0, read);
+            }
+
+            return result.ToArray();
+        }
+
+        /// <summary>
+        /// Считывает из сокета максимально возможное число байт.
+        /// </summary>
+        public static byte[] ReadToEnd
+            (
+                this Socket socket
+            )
+        {
+            MemoryStream result = new MemoryStream();
+
+            while (true)
+            {
+                byte[] buffer = new byte[32 * 1024];
+                int read = socket.Receive(buffer);
                 if (read <= 0)
                 {
                     break;
@@ -828,11 +853,11 @@ namespace ManagedClient
                     "/[*].*?[\r\n]",
                     " "
                 )
-                .Replace ( '\r', ' ' )
-                .Replace ( '\n', ' ' )
-                .Replace ( '\t', ' ' )
-                .Replace ( '\x1F', ' ' )
-                .Replace ( '\x1E', ' ' );
+                .Replace('\r', ' ')
+                .Replace('\n', ' ')
+                .Replace('\t', ' ')
+                .Replace('\x1F', ' ')
+                .Replace('\x1E', ' ');
 
             return text;
         }
