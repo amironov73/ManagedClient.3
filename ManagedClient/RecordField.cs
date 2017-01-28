@@ -100,6 +100,12 @@ namespace ManagedClient
                     }
                     else
                     {
+                        value = Utilities
+                            .ReplaceControlCharacters(value);
+                        if (!string.IsNullOrEmpty(value))
+                        {
+                            value = value.Trim();
+                        }
                         _text = value;
                     }
                 }

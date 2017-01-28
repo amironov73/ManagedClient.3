@@ -72,6 +72,14 @@ namespace ManagedClient
                                 "Text"
                             );
                     }
+
+                    value = Utilities
+                        .ReplaceControlCharacters(value);
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        value = value.Trim();
+                    }
+
                     _text = value;
                 }
             }
