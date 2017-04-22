@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncExtensions.cs" />
     <Compile Include="BatchRecordFormatter.cs" />
     <Compile Include="ConfigDatabase.cs" />
     <Compile Include="Output\AbstractOutput.cs" />
