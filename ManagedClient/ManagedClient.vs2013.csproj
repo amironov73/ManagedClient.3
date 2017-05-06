@@ -77,6 +77,7 @@
     <Compile Include="AsyncExtensions.cs" />
     <Compile Include="BatchRecordFormatter.cs" />
     <Compile Include="ConfigDatabase.cs" />
+    <Compile Include="IrbisEncoding.cs" />
     <Compile Include="Output\AbstractOutput.cs" />
     <Compile Include="AfterQueryEventArgs.cs" />
     <Compile Include="BatchRecordReader.cs" />
@@ -223,6 +224,8 @@
     <Compile Include="SubBasing\SelectionType.cs" />
     <Compile Include="SubBasing\SubBasingSettings.cs" />
     <Compile Include="SubFieldCollection.cs" />
+    <Compile Include="TextNavigator.cs" />
+    <Compile Include="TextPosition.cs" />
     <Compile Include="TextWithEncoding.cs" />
     <Compile Include="Transactions\IrbisTransactionAction.cs" />
     <Compile Include="Transactions\IrbisTransactionContext.cs" />
