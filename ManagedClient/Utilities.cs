@@ -1,4 +1,7 @@
-﻿/* Utilities.cs
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+/* Utilities.cs
  */
 
 #region Using directives
@@ -10,7 +13,8 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
-using System.Text.RegularExpressions;
+
+using JetBrains.Annotations;
 
 using CM = System.Configuration.ConfigurationManager;
 
@@ -26,48 +30,42 @@ namespace ManagedClient
         /// <summary>
         /// Выборка элемента из массива.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="array"></param>
-        /// <param name="occurrence"></param>
-        /// <returns></returns>
         public static T GetOccurrence<T>
             (
-                this T[] array,
+                [NotNull] this T[] array,
                 int occurrence
             )
         {
-            occurrence = (occurrence >= 0)
+            occurrence = occurrence >= 0
                             ? occurrence
                             : array.Length + occurrence;
             T result = default(T);
-            if ((occurrence >= 0) && (occurrence < array.Length))
+            if (occurrence >= 0 && occurrence < array.Length)
             {
                 result = array[occurrence];
             }
+
             return result;
         }
 
         /// <summary>
         /// Выборка элемента из списка.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
-        /// <param name="occurrence"></param>
-        /// <returns></returns>
         public static T GetOccurrence<T>
             (
-                this IList<T> list,
+                [NotNull] this IList<T> list,
                 int occurrence
             )
         {
-            occurrence = (occurrence >= 0)
+            occurrence = occurrence >= 0
                             ? occurrence
                             : list.Count + occurrence;
             T result = default(T);
-            if ((occurrence >= 0) && (occurrence < list.Count))
+            if (occurrence >= 0 && occurrence < list.Count)
             {
                 result = list[occurrence];
             }
+
             return result;
         }
 
@@ -75,12 +73,10 @@ namespace ManagedClient
         /// Отбирает из последовательности только
         /// ненулевые элементы.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sequence"></param>
-        /// <returns></returns>
+        [NotNull]
         public static IEnumerable<T> NonNullItems<T>
             (
-                this IEnumerable<T> sequence
+                [NotNull] this IEnumerable<T> sequence
             )
             where T : class
         {
@@ -90,11 +86,10 @@ namespace ManagedClient
         /// <summary>
         /// Отбирает из последовательности только непустые строки.
         /// </summary>
-        /// <param name="sequence"></param>
-        /// <returns></returns>
+        [NotNull]
         public static IEnumerable<string> NonEmptyLines
             (
-                this IEnumerable<string> sequence
+                [NotNull] this IEnumerable<string> sequence
             )
         {
             return sequence.Where(line => !string.IsNullOrEmpty(line));
@@ -103,20 +98,21 @@ namespace ManagedClient
         /// <summary>
         /// Разбивает строку по указанному разделителю.
         /// </summary>
-        /// <param name="line"></param>
-        /// <param name="delimiter"></param>
-        /// <returns></returns>
+        [NotNull]
         public static string[] SplitFirst
             (
-                this string line,
+                [NotNull] this string line,
                 char delimiter
             )
         {
             int index = line.IndexOf(delimiter);
-            string[] result = (index < 0)
-                                  ? new[] { line }
-                                  : new[] { line.Substring(0, index),
-                                      line.Substring(index + 1) };
+            string[] result = index < 0
+                ? new[] { line }
+                : new[] {
+                    line.Substring(0, index),
+                    line.Substring(index + 1)
+                };
+
             return result;
         }
 
@@ -128,8 +124,8 @@ namespace ManagedClient
         /// <returns>Строки совпадают с точностью до регистра.</returns>
         public static bool SameString
             (
-                this string one,
-                string two
+                [CanBeNull] this string one,
+                [CanBeNull] string two
             )
         {
             return string.Compare(one, two, StringComparison.OrdinalIgnoreCase) == 0;
@@ -138,13 +134,10 @@ namespace ManagedClient
         /// <summary>
         /// Сравнивает строки.
         /// </summary>
-        /// <param name="one"></param>
-        /// <param name="two"></param>
-        /// <returns></returns>
         public static bool SameStringSensitive
             (
-                this string one,
-                string two
+                [CanBeNull] this string one,
+                [CanBeNull] string two
             )
         {
             return string.Compare(one, two, StringComparison.Ordinal) == 0;
@@ -160,7 +153,7 @@ namespace ManagedClient
         public static bool OneOf
             (
                 this string one,
-                IEnumerable<string> many
+                [NotNull] IEnumerable<string> many
             )
         {
             return many
@@ -193,7 +186,7 @@ namespace ManagedClient
         public static bool OneOf
             (
                 this char one,
-                IEnumerable<char> many
+                [NotNull] IEnumerable<char> many
             )
         {
             return many
@@ -228,38 +221,27 @@ namespace ManagedClient
                 char two
             )
         {
-#if PocketPC
-            return (char.ToUpper(one) == char.ToUpper(two));
-#else
-            return (char.ToUpperInvariant(one) == char.ToUpperInvariant(two));
-#endif
+            return char.ToUpperInvariant(one) == char.ToUpperInvariant(two);
         }
 
         /// <summary>
         /// Представляет ли строка положительное целое число.
         /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
         public static bool IsPositiveInteger
             (
-                this string text
+                [CanBeNull] this string text
             )
         {
-            return (text.SafeParseInt32(0) > 0);
+            return text.SafeParseInt32(0) > 0;
         }
 
         /// <summary>
         /// Безопасное преобразование строки
         /// в целое.
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="defaultValue"></param>
-        /// <param name="minValue"></param>
-        /// <param name="maxValue"></param>
-        /// <returns></returns>
         public static int SafeToInt32
             (
-                string text,
+                [CanBeNull] string text,
                 int defaultValue,
                 int minValue,
                 int maxValue
@@ -269,16 +251,18 @@ namespace ManagedClient
             {
                 return defaultValue;
             }
+
             int result;
             if (!int.TryParse(text, out result))
             {
                 result = defaultValue;
             }
-            if ((result < minValue)
-                || (result > maxValue))
+            if (result < minValue
+                || result > maxValue)
             {
                 result = defaultValue;
             }
+
             return result;
         }
 
@@ -287,10 +271,11 @@ namespace ManagedClient
         /// </summary>
         /// <param name="text">Строка, подлежащая парсингу.</param>
         /// <param name="defaultValue">Значение по умолчанию.</param>
-        /// <returns>Разобранное целое число или значение по умолчанию.</returns>
+        /// <returns>Разобранное целое число или значение по умолчанию.
+        /// </returns>
         public static int SafeParseInt32
             (
-                this string text,
+                [CanBeNull] this string text,
                 int defaultValue
             )
         {
@@ -298,7 +283,9 @@ namespace ManagedClient
 
             try
             {
+                // ReSharper disable AssignNullToNotNullAttribute
                 result = int.Parse(text);
+                // ReSharper restore AssignNullToNotNullAttribute
             }
             // ReSharper disable EmptyGeneralCatchClause
             catch
@@ -307,10 +294,6 @@ namespace ManagedClient
                 // Do nothing
             }
 
-            //if (!Int32.TryParse(text, out result))
-            //{
-            //    result = defaultValue;
-            //}
             return result;
         }
 
@@ -318,10 +301,11 @@ namespace ManagedClient
         /// Безопасный парсинг целого числа.
         /// </summary>
         /// <param name="text">Строка, подлежащая парсингу.</param>
-        /// <returns>Разобранное целое число или значение по умолчанию.</returns>
+        /// <returns>Разобранное целое число или значение по умолчанию.
+        /// </returns>
         public static int SafeParseInt32
             (
-                this string text
+                [CanBeNull] this string text
             )
         {
             return SafeParseInt32
@@ -334,13 +318,10 @@ namespace ManagedClient
         /// <summary>
         /// Сравнение строк.
         /// </summary>
-        /// <param name="s1"></param>
-        /// <param name="s2"></param>
-        /// <returns></returns>
         public static int SafeCompare
             (
-                this string s1,
-                string s2
+                [CanBeNull] this string s1,
+                [CanBeNull] string s2
             )
         {
             return string.Compare
@@ -354,12 +335,9 @@ namespace ManagedClient
         /// <summary>
         /// Сравнение строки с массивом.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="list"></param>
-        /// <returns></returns>
         public static bool SafeCompare
             (
-                string value,
+                [CanBeNull] string value,
                 params string[] list
             )
         {
@@ -367,9 +345,10 @@ namespace ManagedClient
             {
                 return false;
             }
+
             foreach (string s in list)
             {
-                if (String.Equals
+                if (string.Equals
                     (
                         value,
                         s,
@@ -379,19 +358,17 @@ namespace ManagedClient
                     return true;
                 }
             }
+
             return false;
         }
 
         /// <summary>
         /// Поиск подстроки.
         /// </summary>
-        /// <param name="s1"></param>
-        /// <param name="s2"></param>
-        /// <returns></returns>
         public static bool SafeContains
             (
-                string s1,
-                string s2
+                [CanBeNull] string s1,
+                [CanBeNull] string s2
             )
         {
             if (string.IsNullOrEmpty(s1)
@@ -399,6 +376,7 @@ namespace ManagedClient
             {
                 return false;
             }
+
             return s1
                 .ToLowerInvariant()
                 .Contains
@@ -410,12 +388,9 @@ namespace ManagedClient
         /// <summary>
         /// Поиск подстроки.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="list"></param>
-        /// <returns></returns>
         public static bool SafeContains
             (
-                string value,
+                [CanBeNull] string value,
                 params string[] list
             )
         {
@@ -423,26 +398,26 @@ namespace ManagedClient
             {
                 return false;
             }
+
+            value = value.ToUpperInvariant();
             foreach (string s in list)
             {
-                if (value.ToUpper().Contains(s.ToUpper()))
+                if (value.Contains(s.ToUpperInvariant()))
                 {
                     return true;
                 }
             }
+
             return false;
         }
 
         /// <summary>
         /// Поиск начала строки.
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="begin"></param>
-        /// <returns></returns>
         public static bool SafeStarts
             (
-                string text,
-                string begin
+                [CanBeNull] string text,
+                [CanBeNull] string begin
             )
         {
             if (string.IsNullOrEmpty(text)
@@ -450,6 +425,7 @@ namespace ManagedClient
             {
                 return false;
             }
+
             return text.ToLowerInvariant()
                 .StartsWith(begin.ToLowerInvariant());
         }
@@ -460,6 +436,7 @@ namespace ManagedClient
         /// </summary>
         /// <param name="value">Число для преобразования.</param>
         /// <returns>Строковое представление числа.</returns>
+        [NotNull]
         public static string ToInvariantString
             (
                 this int value
@@ -474,6 +451,7 @@ namespace ManagedClient
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
+        [NotNull]
         public static string ToInvariantString
             (
                 this char value
@@ -490,6 +468,7 @@ namespace ManagedClient
         /// <param name="first">Левая граница диапазона.</param>
         /// <param name="last">Правая граница диапазона.</param>
         /// <returns>Строковое представление диапазона.</returns>
+        [NotNull]
         public static string FormatRange
             (
                 int first,
@@ -500,11 +479,13 @@ namespace ManagedClient
             {
                 return first.ToInvariantString();
             }
-            if (first == (last - 1))
+
+            if (first == last - 1)
             {
-                return (first.ToInvariantString() + ", " + last.ToInvariantString());
+                return first.ToInvariantString() + ", " + last.ToInvariantString();
             }
-            return (first.ToInvariantString() + "-" + last.ToInvariantString());
+
+            return first.ToInvariantString() + "-" + last.ToInvariantString();
         }
 
         /// <summary>
@@ -519,9 +500,10 @@ namespace ManagedClient
         /// Числа допускаются только неотрицательные.
         /// </remarks>
         /// <returns>Строковое представление набора чисел.</returns>
+        [NotNull]
         public static string CompressRange
             (
-                IEnumerable<int> n
+                [CanBeNull] IEnumerable<int> n
             )
         {
             if (n == null)
@@ -532,7 +514,7 @@ namespace ManagedClient
             // ReSharper disable PossibleMultipleEnumeration
             if (!n.Any())
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             var result = new StringBuilder();
@@ -541,16 +523,16 @@ namespace ManagedClient
             var last = prev;
             foreach (var i in n.Skip(1))
             {
-                if (i != (last + 1))
+                if (i != last + 1)
                 {
-                    result.AppendFormat("{0}{1}", (first ? "" : ", "),
+                    result.AppendFormat("{0}{1}", first ? "" : ", ",
                         FormatRange(prev, last));
                     prev = i;
                     first = false;
                 }
                 last = i;
             }
-            result.AppendFormat("{0}{1}", (first ? "" : ", "),
+            result.AppendFormat("{0}{1}", first ? "" : ", ",
                 FormatRange(prev, last));
 
             return result.ToString();
@@ -563,9 +545,10 @@ namespace ManagedClient
         /// <remarks>Пустые строки не удаляются.</remarks>
         /// <param name="text">Текст для разбиения.</param>
         /// <returns>Массив строк.</returns>
+        [NotNull]
         public static string[] SplitLines
             (
-                this string text
+                [NotNull] this string text
             )
         {
             text = text.Replace("\r\n", "\r");
@@ -581,9 +564,10 @@ namespace ManagedClient
         /// </summary>
         /// <param name="lines">Строки для склейки.</param>
         /// <returns>Склеенный текст.</returns>
+        [NotNull]
         public static string MergeLines
             (
-                this IEnumerable<string> lines
+                [NotNull] this IEnumerable<string> lines
             )
         {
             string result = string.Join
@@ -591,6 +575,7 @@ namespace ManagedClient
                     Environment.NewLine,
                     lines.ToArray()
                 );
+
             return result;
         }
 
@@ -601,49 +586,53 @@ namespace ManagedClient
         /// ответ, после чего закрывает соединение).</remarks>
         /// <param name="stream">Поток для чтения.</param>
         /// <returns>Массив считанных байт.</returns>
+        [NotNull]
         public static byte[] ReadToEnd
             (
-                this Stream stream
+                [NotNull] this Stream stream
             )
         {
-            MemoryStream result = new MemoryStream();
-
-            while (true)
+            using (MemoryStream result = new MemoryStream())
             {
-                byte[] buffer = new byte[32 * 1024];
-                int read = stream.Read(buffer, 0, buffer.Length);
-                if (read <= 0)
+                while (true)
                 {
-                    break;
+                    byte[] buffer = new byte[32 * 1024];
+                    int read = stream.Read(buffer, 0, buffer.Length);
+                    if (read <= 0)
+                    {
+                        break;
+                    }
+                    result.Write(buffer, 0, read);
                 }
-                result.Write(buffer, 0, read);
-            }
 
-            return result.ToArray();
+                return result.ToArray();
+            }
         }
 
         /// <summary>
         /// Считывает из сокета максимально возможное число байт.
         /// </summary>
+        [NotNull]
         public static byte[] ReadToEnd
             (
-                this Socket socket
+                [NotNull] this Socket socket
             )
         {
-            MemoryStream result = new MemoryStream();
-
-            while (true)
+            using (MemoryStream result = new MemoryStream())
             {
-                byte[] buffer = new byte[32 * 1024];
-                int read = socket.Receive(buffer);
-                if (read <= 0)
+                while (true)
                 {
-                    break;
+                    byte[] buffer = new byte[32 * 1024];
+                    int read = socket.Receive(buffer);
+                    if (read <= 0)
+                    {
+                        break;
+                    }
+                    result.Write(buffer, 0, read);
                 }
-                result.Write(buffer, 0, read);
-            }
 
-            return result.ToArray();
+                return result.ToArray();
+            }
         }
 
         /// <summary>
@@ -655,8 +644,8 @@ namespace ManagedClient
         /// <param name="count">Количество байт для дампа.</param>
         public static void DumpBytes
             (
-                TextWriter writer,
-                byte[] buffer,
+                [NotNull] TextWriter writer,
+                [NotNull] byte[] buffer,
                 int offset,
                 int count
             )
@@ -675,15 +664,15 @@ namespace ManagedClient
         /// <summary>
         /// Шестнадцатиричный дамп массива байт.
         /// </summary>
+        [NotNull]
         public static string DumpBytes
             (
-                byte[] buffer
+                [NotNull] byte[] buffer
             )
         {
             StringBuilder result = new StringBuilder(buffer.Length * 5);
 
             int offset;
-
             for (offset = 0; offset < buffer.Length; offset += 16)
             {
                 result.AppendFormat
@@ -712,65 +701,58 @@ namespace ManagedClient
         /// <summary>
         /// Добавление элемента к массиву.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sourceArray"></param>
-        /// <param name="item"></param>
-        /// <returns></returns>
+        [NotNull]
         public static T[] AppendToArray<T>
             (
-                this T[] sourceArray,
+                [NotNull] this T[] sourceArray,
                 T item
             )
         {
             List<T> result = new List<T>(sourceArray.Length);
             result.AddRange(sourceArray);
             result.Add(item);
+
             return result.ToArray();
         }
 
         /// <summary>
         /// Добавление элементов к массиву.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sourceArray"></param>
-        /// <param name="items"></param>
-        /// <returns></returns>
+        [NotNull]
         public static T[] AppendToArray<T>
             (
-                this T[] sourceArray,
-                IEnumerable<T> items
+                [NotNull] this T[] sourceArray,
+                [NotNull] IEnumerable<T> items
             )
         {
             List<T> result = new List<T>(sourceArray.Length);
             result.AddRange(sourceArray);
             result.AddRange(items);
+
             return result.ToArray();
         }
 
         /// <summary>
         /// Добавление элементов к массиву.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sourceArray"></param>
-        /// <param name="items"></param>
-        /// <returns></returns>
+        [NotNull]
         public static T[] AppendToArray<T>
             (
-                this T[] sourceArray,
+                [NotNull] this T[] sourceArray,
                 params T[] items
             )
         {
             List<T> result = new List<T>(sourceArray.Length);
             result.AddRange(sourceArray);
             result.AddRange(items);
+
             return result.ToArray();
         }
 
         /// <summary>
         /// Получаем сеттинг из возможных кандидатов.
         /// </summary>
-        /// <param name="candidates"></param>
-        /// <returns></returns>
+        [CanBeNull]
         public static string FindSetting
             (
                 params string[] candidates
@@ -784,18 +766,16 @@ namespace ManagedClient
                     return setting;
                 }
             }
+
             return null;
         }
 
         /// <summary>
         /// Содержит ли строка любой из перечисленных символов.
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="symbols"></param>
-        /// <returns></returns>
         public static bool ContainsAnySymbol
             (
-                this string text,
+                [NotNull] this string text,
                 params char[] symbols
             )
         {
@@ -815,11 +795,9 @@ namespace ManagedClient
         /// <summary>
         /// Строка содержит пробельные символы?
         /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
         public static bool ContainsWhitespace
             (
-                this string text
+                [NotNull] this string text
             )
         {
             return text.ContainsAnySymbol
@@ -829,17 +807,98 @@ namespace ManagedClient
         }
 
         /// <summary>
-        /// Подготавливает строку запроса
+        /// Remove comments from the format.
         /// </summary>
-        /// <param name="text"></param>
+        [CanBeNull]
+        public static string RemoveComments
+            (
+                [CanBeNull] string text
+            )
+        {
+            const char ZERO = '\0';
+
+            if (string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
+
+            if (!text.Contains("/*"))
+            {
+                return text;
+            }
+
+            StringBuilder result = new StringBuilder(text.Length);
+            TextNavigator navigator = new TextNavigator(text);
+            char state = ZERO;
+
+            while (!navigator.IsEOF)
+            {
+                char c = navigator.ReadChar();
+
+                switch (state)
+                {
+                    case '\'':
+                        if (c == '\'')
+                        {
+                            state = ZERO;
+                        }
+                        result.Append(c);
+                        break;
+
+                    case '"':
+                        if (c == '"')
+                        {
+                            state = ZERO;
+                        }
+                        result.Append(c);
+                        break;
+
+                    case '|':
+                        if (c == '|')
+                        {
+                            state = ZERO;
+                        }
+                        result.Append(c);
+                        break;
+
+                    default:
+                        if (c == '/')
+                        {
+                            if (navigator.PeekChar() == '*')
+                            {
+                                navigator.ReadTo('\r', '\n');
+                            }
+                            else
+                            {
+                                result.Append(c);
+                            }
+                        }
+                        else if (c == '\'' || c == '"' || c == '|')
+                        {
+                            state = c;
+                            result.Append(c);
+                        }
+                        else
+                        {
+                            result.Append(c);
+                        }
+                        break;
+                }
+            }
+
+            return result.ToString();
+        }
+
+        /// <summary>
+        /// Подготавливает строку запроса.
+        /// </summary>
         /// <remarks>Строка формата не должна
         /// содержать комментариев и переводов
-        /// строки (настоящих и ирбисных)
+        /// строки (настоящих и ирбисных).
         /// </remarks>
-        /// <returns></returns>
         public static string PrepareFormat
             (
-                this string text
+                [CanBeNull] this string text
             )
         {
             if (string.IsNullOrEmpty(text))
@@ -847,17 +906,15 @@ namespace ManagedClient
                 return text;
             }
 
-            text = Regex.Replace
-                (
-                    text,
-                    "/[*].*?[\r\n]",
-                    " "
-                )
-                .Replace('\r', ' ')
-                .Replace('\n', ' ')
-                .Replace('\t', ' ')
-                .Replace('\x1F', ' ')
-                .Replace('\x1E', ' ');
+            text = RemoveComments(text);
+            if (!string.IsNullOrEmpty(text))
+            {
+                text = text.Replace("\r", string.Empty)
+                    .Replace("\n", string.Empty)
+                    .Replace('\t', ' ')
+                    .Replace("\x1F", string.Empty)
+                    .Replace("\x1E", string.Empty);
+            }
 
             return text;
         }
@@ -866,15 +923,17 @@ namespace ManagedClient
         /// Подготавливает строку запроса,
         /// заменяя запрещённые символы на пробелы.
         /// </summary>
+        [CanBeNull]
         public static string PrepareQuery
             (
-                this string text
+                [CanBeNull] this string text
             )
         {
             if (string.IsNullOrEmpty(text))
             {
                 return text;
             }
+
             return text
                 .Replace('\r', ' ')
                 .Replace('\n', ' ')
@@ -885,9 +944,10 @@ namespace ManagedClient
         /// Превращает строку в видимую.
         /// Пример: "(null)".
         /// </summary>
+        [NotNull]
         public static string MakeVisibleString
             (
-                this string text
+                [CanBeNull] this string text
             )
         {
             if (ReferenceEquals(text, null))
@@ -898,10 +958,6 @@ namespace ManagedClient
             {
                 return "(empty)";
             }
-            //if (string.IsNullOrWhiteSpace(text))
-            //{
-            //    return "(whitespace)";
-            //}
 
             return text;
         }
@@ -909,9 +965,10 @@ namespace ManagedClient
         /// <summary>
         /// Разбиение массива на (почти) равные части.
         /// </summary>
+        [NotNull]
         public static T[][] SplitArray<T>
             (
-                T[] array,
+                [NotNull] T[] array,
                 int partCount
             )
         {
@@ -939,10 +996,11 @@ namespace ManagedClient
         /// Применяет действие к каждому элементу последовательности
         /// </summary>
         /// <returns>Ту же самую последовательность.</returns>
+        [NotNull]
         public static IEnumerable<T> Tee<T>
             (
-                 this IEnumerable<T> list,
-                 Action<T> action
+                 [NotNull] this IEnumerable<T> list,
+                 [NotNull] Action<T> action
             )
         {
             foreach (T item in list)
@@ -955,9 +1013,10 @@ namespace ManagedClient
         /// <summary>
         /// Replace control characters in the text.
         /// </summary>
+        [CanBeNull]
         public static string ReplaceControlCharacters
             (
-                string text,
+                [CanBeNull] string text,
                 char substitute
             )
         {
@@ -997,12 +1056,163 @@ namespace ManagedClient
         /// <summary>
         /// Replace control characters in the text.
         /// </summary>
+        [CanBeNull]
         public static string ReplaceControlCharacters
             (
-                string text
+                [CanBeNull] string text
             )
         {
             return ReplaceControlCharacters(text, ' ');
+        }
+
+
+        /// <summary>
+        /// Throw <see cref="ArgumentNullException"/>
+        /// if given value is <c>null</c>.
+        /// </summary>
+        [NotNull]
+        public static T ThrowIfNull<T>
+            (
+                [CanBeNull] this T value
+            )
+            where T : class
+        {
+            if (ReferenceEquals(value, null))
+            {
+                throw new ArgumentException("value");
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Throw <see cref="ArgumentNullException"/>
+        /// if given value is <c>null</c>.
+        /// </summary>
+        [NotNull]
+        public static T1 ThrowIfNull<T1, T2>
+            (
+                [CanBeNull] this T1 value
+            )
+            where T1 : class
+            where T2 : Exception, new()
+        {
+            if (ReferenceEquals(value, null))
+            {
+                throw new T2();
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Throw <see cref="ArgumentNullException"/>
+        /// if given value is <c>null</c>.
+        /// </summary>
+        [NotNull]
+        public static T ThrowIfNull<T>
+            (
+                [CanBeNull] this T value,
+                [NotNull] string message
+            )
+            where T : class
+        {
+            if (ReferenceEquals(value, null))
+            {
+                throw new ArgumentException(message);
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Преобразование любого значения в строку.
+        /// </summary>
+        /// <returns>Для <c>null</c> возвращается "(null)".
+        /// </returns>
+        [NotNull]
+        public static string ToVisibleString<T>
+            (
+                [CanBeNull] this T value
+            )
+        {
+            if (ReferenceEquals(value, null))
+            {
+                return "(null)";
+            }
+
+            string result = value.ToString();
+
+            return result.ToVisibleString();
+        }
+
+        /// <summary>
+        /// Determines whether given object
+        /// is default value.
+        /// </summary>
+        public static bool NotDefault<T>
+            (
+                this T obj
+            )
+        {
+            return !EqualityComparer<T>.Default.Equals
+                (
+                    obj,
+                    default(T)
+                );
+        }
+
+        /// <summary>
+        /// Returns given value instead of
+        /// default(T) if happens.
+        /// </summary>
+        public static T NotDefault<T>
+            (
+                this T obj,
+                T value
+            )
+        {
+            return EqualityComparer<T>.Default.Equals
+                (
+                    obj,
+                    default(T)
+                )
+                ? value
+                : obj;
+        }
+
+        /// <summary>
+        /// Преобразование любого значения в строку.
+        /// </summary>
+        /// <returns>Для <c>null</c> возвращается <c>null</c>.
+        /// </returns>
+        [CanBeNull]
+        public static string NullableToString<T>
+            (
+                [CanBeNull] this T value
+            )
+            where T : class
+        {
+            return ReferenceEquals(value, null)
+                ? null
+                : value.ToString();
+        }
+
+        /// <summary>
+        /// Преобразование любого значения в строку.
+        /// </summary>
+        /// <returns>Для <c>null</c> возвращается "(null)".
+        /// </returns>
+        [NotNull]
+        public static string NullableToVisibleString<T>
+            (
+                [CanBeNull] this T value
+            )
+            where T : class
+        {
+            string text = value.NullableToString();
+
+            return text.ToVisibleString();
         }
     }
 }
