@@ -112,7 +112,7 @@
     <Compile Include="Highlight\IrbisPlainTextHighlighter.cs" />
     <Compile Include="Highlight\IrbisRichTextHighlighter.cs" />
     <Compile Include="Highlight\IrbisTextHighlighter.cs" />
-    <Compile Include="IfpRecord.cs" />
+    <Compile Include="Direct\IfpRecord.cs" />
     <Compile Include="IniFile.cs" />
     <Compile Include="Direct\InvertedFile64.cs" />
     <Compile Include="Fields\ReaderAddress.cs" />
@@ -250,9 +250,9 @@
     <Compile Include="Direct\MstFile64.cs" />
     <Compile Include="Direct\MstRecord64.cs" />
     <Compile Include="Direct\MstRecordLeader64.cs" />
-    <Compile Include="NodeItem.cs" />
-    <Compile Include="NodeLeader.cs" />
-    <Compile Include="NodeRecord.cs" />
+    <Compile Include="Direct\NodeItem.cs" />
+    <Compile Include="Direct\NodeLeader.cs" />
+    <Compile Include="Direct\NodeRecord.cs" />
     <Compile Include="NumberFilter.cs" />
     <Compile Include="ObjectDumper.cs" />
     <Compile Include="Magazines\MagazineArticleInfo.cs" />

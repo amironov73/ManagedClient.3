@@ -1,4 +1,7 @@
-﻿/* MstRecordLeader64.cs
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+/* MstRecordLeader64.cs
  */
 
 #region Using directives
@@ -7,6 +10,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+
+using JetBrains.Annotations;
 
 #endregion
 
@@ -22,7 +27,7 @@ namespace ManagedClient.Direct
     public sealed class MstRecordLeader64
     {
         #region Constants
-        
+
         /// <summary>
         /// Фиксированный размер лидера записи.
         /// </summary>
@@ -74,7 +79,14 @@ namespace ManagedClient.Direct
 
         #region Public methods
 
-        public static MstRecordLeader64 Read(Stream stream)
+        /// <summary>
+        /// Read record leader from the stream.
+        /// </summary>
+        [NotNull]
+        public static MstRecordLeader64 Read
+            (
+                [NotNull] Stream stream
+            )
         {
             MstRecordLeader64 result = new MstRecordLeader64
             {
@@ -87,8 +99,8 @@ namespace ManagedClient.Direct
                 Status = stream.ReadInt32Network()
             };
 
-            Debug.Assert(result.Base == 
-                (LeaderSize + result.Nvf * MstDictionaryEntry64.EntrySize));
+            Debug.Assert(result.Base ==
+                LeaderSize + result.Nvf * MstDictionaryEntry64.EntrySize);
 
             return result;
         }
@@ -97,20 +109,21 @@ namespace ManagedClient.Direct
 
         #region Object members
 
-        public override string ToString ( )
+        /// <inheritdoc cref="object.ToString"/>
+        public override string ToString()
         {
-            return string.Format 
-                ( 
+            return string.Format
+                (
                     "Mfn: {0}, Length: {1}, Previous: {2}, "
                   + "Base: {3}, Nvf: {4}, Status: {5}, "
-                  + "Version: {6}", 
+                  + "Version: {6}",
                     Mfn,
-                    Length, 
-                    Previous, 
-                    Base, 
-                    Nvf, 
-                    Status, 
-                    Version 
+                    Length,
+                    Previous,
+                    Base,
+                    Nvf,
+                    Status,
+                    Version
                 );
         }
 

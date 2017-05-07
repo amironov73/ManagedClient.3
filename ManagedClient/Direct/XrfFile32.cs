@@ -1,13 +1,15 @@
-﻿/* XrfFile32.cs
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+/* XrfFile32.cs
  */
 
 #region Using directives
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
+
+using JetBrains.Annotations;
 
 #endregion
 
@@ -24,22 +26,36 @@ namespace ManagedClient.Direct
     {
         #region Constants
 
+        /// <summary>
+        /// Block size.
+        /// </summary>
         public const int XrfBlockSize = 512;
+
+        /// <summary>
+        /// Block capacity.
+        /// </summary>
         public const int XrfBlockCapacity = 127;
 
         #endregion
 
         #region Properties
 
+        /// <summary>
+        /// File name.
+        /// </summary>
+        [NotNull]
         public string FileName { get; private set; }
 
         #endregion
 
         #region Construction
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public XrfFile32
             (
-                string fileName
+                [NotNull] string fileName
             )
         {
             FileName = fileName;
@@ -57,7 +73,8 @@ namespace ManagedClient.Direct
 
         #region Private members
 
-        private Stream _stream;
+        [NotNull]
+        private readonly Stream _stream;
 
         private long _GetOffset
             (
@@ -67,9 +84,9 @@ namespace ManagedClient.Direct
             unchecked
             {
                 int blockNumber = (mfn - 1) / XrfBlockCapacity;
-                int blockOffset = ((mfn - 1) % XrfBlockCapacity) * 4;
+                int blockOffset = (mfn - 1) % XrfBlockCapacity * 4;
                 long result = blockNumber * XrfBlockSize + blockOffset + 4;
-                
+
                 return result;
             }
         }
@@ -78,6 +95,10 @@ namespace ManagedClient.Direct
 
         #region Public methods
 
+        /// <summary>
+        /// Decode the record.
+        /// </summary>
+        [NotNull]
         public XrfRecord32 Decode
             (
                 int value
@@ -95,25 +116,30 @@ namespace ManagedClient.Direct
                     status = RecordStatus.LogicallyDeleted;
                 }
 
-                int blockNumber = (value < 0)
+                int blockNumber = value < 0
                     ? (-(int)(value & 0xFFFFF800) >> 11) - 1
-                    : ((value & 0x7FFFF800) >> 11);
-                int blockOffset = (value < 0)
-                    ? ((-value) & 0x7FF)
-                    : (value & 0x7FF);
+                    : (value & 0x7FFFF800) >> 11;
+                int blockOffset = value < 0
+                    ? -value & 0x7FF
+                    : value & 0x7FF;
 
                 XrfRecord32 result = new XrfRecord32
                 {
                     BlockNumber = blockNumber,
                     BlockOffset = blockOffset,
-                    AbsoluteOffset = MstRecord32.MstBlockSize * (blockNumber - 1) + blockOffset,
+                    AbsoluteOffset = MstRecord32.MstBlockSize * (blockNumber - 1) 
+                        + blockOffset,
                     Status = status
                 };
 
                 return result;
-            }            
+            }
         }
 
+        /// <summary>
+        /// Read the record.
+        /// </summary>
+        [NotNull]
         public XrfRecord32 ReadRecord
             (
                 int mfn
@@ -141,18 +167,20 @@ namespace ManagedClient.Direct
             return Decode(coded);
         }
 
+        /// <summary>
+        /// Write the record.
+        /// </summary>
         public void WriteRecord
             (
-                XrfRecord32 record
+                [NotNull] XrfRecord32 record
             )
         {
-            if (record == null)
-            {
-                throw new ArgumentNullException("record");
-            }
-
+            throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Lock/unlock the record.
+        /// </summary>
         public void LockRecord
             (
                 int mfn,
@@ -170,13 +198,10 @@ namespace ManagedClient.Direct
 
         #region IDisposable members
 
+        /// <inheritdoc cref="IDisposable.Dispose"/>
         public void Dispose()
         {
-            if (_stream != null)
-            {
-                _stream.Dispose();
-                _stream = null;
-            }
+            _stream.Dispose();
         }
 
         #endregion

@@ -1,4 +1,7 @@
-﻿/* XrfRecord32.cs
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+/* XrfRecord32.cs
  */
 
 #region Usingd directives
@@ -28,16 +31,28 @@ namespace ManagedClient.Direct
 
         #region Properties
 
+        /// <summary>
+        /// Absolute offset.
+        /// </summary>
         public int AbsoluteOffset { get; set; }
 
+        /// <summary>
+        /// Block number.
+        /// </summary>
         public int BlockNumber { get; set; }
 
+        /// <summary>
+        /// Block offset.
+        /// </summary>
         public int BlockOffset { get; set; }
 
+        /// <summary>
+        /// Status.
+        /// </summary>
         public RecordStatus Status { get; set; }
 
         /// <summary>
-        /// Is the record locked.
+        /// Is the record locked?
         /// </summary>
         public bool Locked
         {
@@ -56,7 +71,7 @@ namespace ManagedClient.Direct
         }
 
         /// <summary>
-        /// Is the record deleted.
+        /// Is the record deleted?
         /// </summary>
         public bool Deleted
         {

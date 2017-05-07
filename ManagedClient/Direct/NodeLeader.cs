@@ -1,14 +1,18 @@
-﻿/* NodeLeader.cs
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+/* NodeLeader.cs
  */
 
 #region Using directives
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
+
+using JetBrains.Annotations;
+
+using MoonSharp.Interpreter;
 
 #endregion
 
@@ -17,7 +21,9 @@ namespace ManagedClient
     /// <summary>
     /// Лидер записи в N01, L01
     /// </summary>
+    [PublicAPI]
     [Serializable]
+    [MoonSharpUserData]
     [DebuggerDisplay("Number={Number}, Previous={Previous}, Next={Next}, "
         + "TermCount={TermCount}, FreeOffset={FreeOffset}")]
     public sealed class NodeLeader
@@ -55,7 +61,14 @@ namespace ManagedClient
 
         #region Public methods
 
-        public static NodeLeader Read(Stream stream)
+        /// <summary>
+        /// Read the node from the stream.
+        /// </summary>
+        [NotNull]
+        public static NodeLeader Read
+            (
+                [NotNull] Stream stream
+            )
         {
             NodeLeader result = new NodeLeader
                 {
@@ -73,6 +86,7 @@ namespace ManagedClient
 
         #region Object members
 
+        /// <inheritdoc cref="object.ToString"/>
         public override string ToString()
         {
             return string.Format

@@ -1,4 +1,7 @@
-﻿/* IrbisDirectReader32.cs
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+/* IrbisDirectReader32.cs
  */
 
 #region Using directives
@@ -8,30 +11,53 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
+using JetBrains.Annotations;
+
 #endregion
 
 namespace ManagedClient.Direct
 {
+    /// <summary>
+    /// Direct access to IRBIS32 databases.
+    /// </summary>
     public sealed class IrbisDirectReader32
         : IDisposable
     {
         #region Properties
 
+        /// <summary>
+        /// MST file.
+        /// </summary>
+        [NotNull]
         public MstFile32 Mst { get; private set; }
 
+        /// <summary>
+        /// XRF file.
+        /// </summary>
+        [NotNull]
         public XrfFile32 Xrf { get; private set; }
 
+        /// <summary>
+        /// Inverted file.
+        /// </summary>
+        [NotNull]
         public InvertedFile32 InvertedFile { get; private set; }
 
+        /// <summary>
+        /// Database name.
+        /// </summary>
         public string Database { get; private set; }
 
         #endregion
 
         #region Construction
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public IrbisDirectReader32
             (
-                string masterFile
+                [NotNull] string masterFile
             )
         {
             Database = Path.GetFileNameWithoutExtension(masterFile);
@@ -69,11 +95,19 @@ namespace ManagedClient.Direct
 
         #region Public methods
 
+        /// <summary>
+        /// Get maximal MFN.
+        /// </summary>
+        /// <returns></returns>
         public int GetMaxMfn()
         {
             return Mst.ControlRecord.NextMfn - 1;
         }
 
+        /// <summary>
+        /// Read the record.
+        /// </summary>
+        [CanBeNull]
         public IrbisRecord ReadRecord
             (
                 int mfn
@@ -84,12 +118,21 @@ namespace ManagedClient.Direct
             {
                 return null;
             }
-            MstRecord32 mstRecord = Mst.ReadRecord2(xrfRecord.AbsoluteOffset);
+
+            MstRecord32 mstRecord = Mst.ReadRecord2
+                (
+                    xrfRecord.AbsoluteOffset
+                );
             IrbisRecord result = mstRecord.DecodeRecord();
             result.Database = Database;
+
             return result;
         }
 
+        /// <summary>
+        /// Read all versions for the record.
+        /// </summary>
+        [NotNull]
         public IrbisRecord[] ReadAllRecordVersions
             (
                 int mfn
@@ -132,7 +175,13 @@ namespace ManagedClient.Direct
         //    return result;
         //}
 
-        public int[] SearchSimple(string key)
+        /// <summary>
+        /// Simple search.
+        /// </summary>
+        public int[] SearchSimple
+            (
+                string key
+            )
         {
             int[] mfns = InvertedFile.SearchSimple(key);
             List<int> result = new List<int>();
@@ -143,10 +192,17 @@ namespace ManagedClient.Direct
                     result.Add(mfn);
                 }
             }
+
             return result.ToArray();
         }
 
-        public IrbisRecord[] SearchReadSimple(string key)
+        /// <summary>
+        /// Search and read found records.
+        /// </summary>
+        public IrbisRecord[] SearchReadSimple
+            (
+                string key
+            )
         {
             int[] mfns = InvertedFile.SearchSimple(key);
             List<IrbisRecord> result = new List<IrbisRecord>();
@@ -171,6 +227,7 @@ namespace ManagedClient.Direct
                     Debug.WriteLine(ex);
                 }
             }
+
             return result.ToArray();
         }
 
@@ -178,23 +235,12 @@ namespace ManagedClient.Direct
 
         #region IDisposable members
 
+        /// <inheritdoc cref="IDisposable.Dispose"/>
         public void Dispose()
         {
-            if (Mst != null)
-            {
-                Mst.Dispose();
-                Mst = null;
-            }
-            if (Xrf != null)
-            {
-                Xrf.Dispose();
-                Xrf = null;
-            }
-            if (InvertedFile != null)
-            {
-                InvertedFile.Dispose();
-                InvertedFile = null;
-            }
+            Mst.Dispose();
+            Xrf.Dispose();
+            InvertedFile.Dispose();
         }
 
         #endregion

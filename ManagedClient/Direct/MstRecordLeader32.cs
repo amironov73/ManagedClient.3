@@ -1,4 +1,7 @@
-﻿/* MstRecordLeader32.cs
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+/* MstRecordLeader32.cs
  */
 
 #region Using directives
@@ -7,6 +10,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+
+using JetBrains.Annotations;
 
 #endregion
 
@@ -42,8 +47,14 @@ namespace ManagedClient.Direct
         /// </summary>
         public int Length { get; set; }
 
+        /// <summary>
+        /// Number of the previous block.
+        /// </summary>
         public int PreviousBlock { get; set; }
 
+        /// <summary>
+        /// Offset of the previous block.
+        /// </summary>
         public int PreviousOffset { get; set; }
 
         /// <summary>
@@ -68,9 +79,12 @@ namespace ManagedClient.Direct
 
         #region Public methods
 
+        /// <summary>
+        ///  Read the leader.
+        /// </summary>
         public static MstRecordLeader32 Read
             (
-                Stream stream
+                [NotNull] Stream stream
             )
         {
             MstRecordLeader32 result = new MstRecordLeader32
@@ -94,6 +108,7 @@ namespace ManagedClient.Direct
 
         #region Object members
 
+        /// <inheritdoc cref="object.ToString"/>
         public override string ToString()
         {
             return string.Format

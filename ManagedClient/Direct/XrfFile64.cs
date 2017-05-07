@@ -1,13 +1,15 @@
-﻿/* XrfFile64.cs
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+/* XrfFile64.cs
  */
 
 #region Using directives
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
+
+using JetBrains.Annotations;
 
 #endregion
 
@@ -27,17 +29,27 @@ namespace ManagedClient.Direct
 
         #region Properties
 
+        /// <summary>
+        /// File name.
+        /// </summary>
+        [NotNull]
         public string FileName { get; private set; }
 
+        /// <summary>
+        /// All the data in the memory?
+        /// </summary>
         public bool InMemory { get; private set; }
 
         #endregion
 
         #region Construction
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public XrfFile64
             (
-                string fileName,
+                [NotNull] string fileName,
                 bool inMemory
             )
         {
@@ -66,7 +78,7 @@ namespace ManagedClient.Direct
 
         #region Private members
 
-        private Stream _stream;
+        private readonly Stream _stream;
 
         private long _GetOffset
             (
@@ -81,6 +93,10 @@ namespace ManagedClient.Direct
 
         #region Public methods
 
+        /// <summary>
+        /// Read the record.
+        /// </summary>
+        [NotNull]
         public XrfRecord64 ReadRecord
             (
                 int mfn
@@ -106,27 +122,29 @@ namespace ManagedClient.Direct
             int flags = _stream.ReadInt32Network();
 
             XrfRecord64 result = new XrfRecord64
-                                   {
-                                       Mfn = mfn,
-                                       Offset = ofs,
-                                       Status = (RecordStatus)flags
-                                   };
+            {
+                Mfn = mfn,
+                Offset = ofs,
+                Status = (RecordStatus)flags
+            };
 
             return result;
         }
 
+        /// <summary>
+        /// Write the record.
+        /// </summary>
         public void WriteRecord
             (
-                XrfRecord64 record
+                [NotNull] XrfRecord64 record
             )
         {
-            if (record == null)
-            {
-                throw new ArgumentNullException("record");
-            }
-
+            throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Lock/unlock the record.
+        /// </summary>
         public void LockRecord
             (
                 int mfn,
@@ -144,13 +162,10 @@ namespace ManagedClient.Direct
 
         #region IDisposable members
 
+        /// <inheritdoc cref="IDisposable.Dispose"/>
         public void Dispose()
         {
-            if (_stream != null)
-            {
-                _stream.Dispose();
-                _stream = null;
-            }
+            _stream.Dispose();
         }
 
         #endregion

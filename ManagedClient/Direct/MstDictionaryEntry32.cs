@@ -1,4 +1,7 @@
-﻿/* MstDictionaryEntry32.cs
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+/* MstDictionaryEntry32.cs
  */
 
 #region Using directives
@@ -30,20 +33,36 @@ namespace ManagedClient.Direct
 
         #region Properties
 
+        /// <summary>
+        /// Tag.
+        /// </summary>
         public int Tag { get; set; }
 
+        /// <summary>
+        /// Position.
+        /// </summary>
         public int Position { get; set; }
 
+        /// <summary>
+        /// Length.
+        /// </summary>
         public int Length { get; set; }
 
+        /// <summary>
+        /// Value as array of bytes.
+        /// </summary>
         public byte[] Bytes { get; set; }
 
+        /// <summary>
+        /// Value as string.
+        /// </summary>
         public string Text { get; set; }
 
         #endregion
 
         #region Object members
 
+        /// <inheritdoc cref="object.ToString"/>
         public override string ToString()
         {
             return string.Format
