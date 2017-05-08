@@ -1,40 +1,69 @@
-﻿/* MorphologyEntry.cs
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+/* MorphologyEntry.cs
  */
 
 #region Using directives
 
 using System;
 
+using JetBrains.Annotations;
+
+using MoonSharp.Interpreter;
+
 #endregion
 
 namespace ManagedClient.Morphology
 {
+    /// <summary>
+    /// Entry of the morphology database.
+    /// </summary>
+    [PublicAPI]
     [Serializable]
+    [MoonSharpUserData]
     public sealed class MorphologyEntry
     {
         #region Properties
 
-        // Поле 10
+        /// <summary>
+        /// Main term. Field 10.
+        /// </summary>
         public string MainTerm { get; set; }
 
-        // Поле 11
+        /// <summary>
+        /// Dictionary term. Field 11.
+        /// </summary>
         public string Dictionary { get; set; }
 
-        // Поле 12
+        /// <summary>
+        /// Language name. Field 12.
+        /// </summary>
         public string Language { get; set; }
 
-        // Поле 20
+        /// <summary>
+        /// Forms of the word. Repeatable field 20.
+        /// </summary>
         public string[] Forms { get; set; }
 
         #endregion
 
         #region Public methods
 
+        /// <summary>
+        /// Parse the record.
+        /// </summary>
+        [NotNull]
         public static MorphologyEntry Parse
             (
-                IrbisRecord record
+                [NotNull] IrbisRecord record
             )
         {
+            if (ReferenceEquals(record, null))
+            {
+                throw new ArgumentException("record");
+            }
+
             MorphologyEntry result = new MorphologyEntry
             {
                 MainTerm = record.FM("10"),
@@ -50,6 +79,7 @@ namespace ManagedClient.Morphology
 
         #region Object members
 
+        /// <inheritdoc cref="object.ToString"/>
         public override string ToString()
         {
             return MainTerm;
