@@ -154,10 +154,10 @@
     <Compile Include="ParallelFormatter.cs" />
     <Compile Include="ParallelRecordReader.cs" />
     <Compile Include="Pooling\IrbisConnectionPool.cs" />
+    <Compile Include="Pooling\IrbisPoolGuard.cs" />
     <Compile Include="Pooling\PoolUtilities.cs" />
     <Compile Include="Processing\ProcessingContext.cs" />
     <Compile Include="Processing\ProcessingResult.cs" />
-    <Compile Include="Processing\ProtocolStream.cs" />
     <Compile Include="Processing\RecordHandler.cs" />
     <Compile Include="Processing\RecordProcessor.cs" />
     <Compile Include="Quality\CheckBadCharacters.cs" />

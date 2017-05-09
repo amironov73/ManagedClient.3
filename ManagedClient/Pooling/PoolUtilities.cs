@@ -1,4 +1,7 @@
-﻿/* PoolUtilities.cs
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+/* PoolUtilities.cs
  */
 
 #region Using directives
@@ -8,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using JetBrains.Annotations;
+
 #endregion
 
 namespace ManagedClient.Pooling
@@ -15,6 +20,7 @@ namespace ManagedClient.Pooling
     /// <summary>
     /// Утилиты для работы пулом соединений.
     /// </summary>
+    [PublicAPI]
     public static class PoolUtilities
     {
         #region Private members
@@ -23,9 +29,13 @@ namespace ManagedClient.Pooling
 
         #region Public methods
 
+        /// <summary>
+        /// Чтение записи с помощью пула.
+        /// </summary>
+        [NotNull]
         public static IrbisRecord ReadRecord
             (
-                this IrbisConnectionPool pool,
+                [NotNull] this IrbisConnectionPool pool,
                 int mfn
             )
         {
@@ -35,9 +45,13 @@ namespace ManagedClient.Pooling
             return result;
         }
 
+        /// <summary>
+        /// Поиск в каталоге с помощью пула.
+        /// </summary>
+        [NotNull]
         public static int[] Search
             (
-                this IrbisConnectionPool pool,
+                [NotNull] this IrbisConnectionPool pool,
                 string format,
                 params object[] args
             )
@@ -48,10 +62,13 @@ namespace ManagedClient.Pooling
             return result;
         }
 
+        /// <summary>
+        /// Сохранение записей с помощью пула.
+        /// </summary>
         public static void WriteRecord
             (
-                this IrbisConnectionPool pool,
-                IrbisRecord record
+                [NotNull] this IrbisConnectionPool pool,
+                [NotNull] IrbisRecord record
             )
         {
             ManagedClient64 client = pool.AcquireConnection();
