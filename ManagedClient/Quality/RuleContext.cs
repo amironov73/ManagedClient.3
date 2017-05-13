@@ -1,24 +1,33 @@
-﻿/* RuleContext.cs
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+/* RuleContext.cs
  */
 
 #region Using directives
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
+using JetBrains.Annotations;
+
+using MoonSharp.Interpreter;
 
 #endregion
 
 namespace ManagedClient.Quality
 {
+    /// <summary>
+    /// Context for the <see cref="IrbisRule"/>.
+    /// </summary>
+    [PublicAPI]
     [Serializable]
+    [MoonSharpUserData]
     public sealed class RuleContext
     {
         #region Properties
 
         /// <summary>
-        /// Клиент.
+        /// Client connection.
         /// </summary>
         public ManagedClient64 Client { get; set; }
 

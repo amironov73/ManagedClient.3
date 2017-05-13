@@ -1,12 +1,14 @@
-﻿/* CheckBadCharacters.cs -- проверка на плохие символы
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+/* CheckBadCharacters.cs -- проверка на плохие символы
  */
 
 #region Using directives
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using JetBrains.Annotations;
+
+using MoonSharp.Interpreter;
 
 #endregion
 
@@ -15,6 +17,8 @@ namespace ManagedClient.Quality
     /// <summary>
     /// Проверка на плохие символы.
     /// </summary>
+    [PublicAPI]
+    [MoonSharpUserData]
     public sealed class CheckBadCharacters
         : IrbisRule
     {
@@ -24,11 +28,13 @@ namespace ManagedClient.Quality
 
         #region IrbisRule members
 
+        /// <inheritdoc cref="IrbisRule.FieldSpec"/>
         public override string FieldSpec
         {
             get { return "!3005"; }
         }
 
+        /// <inheritdoc cref="IrbisRule.CheckRecord"/>
         public override RuleReport CheckRecord
             (
                 RuleContext context
@@ -39,10 +45,7 @@ namespace ManagedClient.Quality
             RecordField[] fields = GetFields();
             foreach (RecordField field in fields)
             {
-                MustNotContainBadCharacters
-                    (
-                        field
-                    );
+                MustNotContainBadCharacters(field);
                 foreach (SubField subField in field.SubFields)
                 {
                     MustNotContainBadCharacters
@@ -51,7 +54,7 @@ namespace ManagedClient.Quality
                             subField
                         );
                 }
-                
+
             }
 
             return EndCheck();
