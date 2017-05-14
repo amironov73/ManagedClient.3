@@ -1,9 +1,16 @@
-﻿/* Require910.cs -- сведения об экземплярах.
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+/* Require910.cs -- сведения об экземплярах.
  */
 
 #region Using directives
 
+using JetBrains.Annotations;
+
 using ManagedClient.Fields;
+
+using MoonSharp.Interpreter;
 
 #endregion
 
@@ -12,6 +19,8 @@ namespace ManagedClient.Quality.Rules
     /// <summary>
     /// Сведения об экземплярах.
     /// </summary>
+    [PublicAPI]
+    [MoonSharpUserData]
     public sealed class Require910
         : IrbisRule
     {
@@ -22,7 +31,7 @@ namespace ManagedClient.Quality.Rules
 
         private void CheckField
             (
-                RecordField field
+                [NotNull] RecordField field
             )
         {
             ExemplarInfo exemplar = ExemplarInfo.Parse(field);
@@ -60,11 +69,13 @@ namespace ManagedClient.Quality.Rules
 
         #region IrbisRule members
 
+        /// <inheritdoc cref="IrbisRule.FieldSpec"/>
         public override string FieldSpec
         {
             get { return "910"; }
         }
 
+        /// <inheritdoc cref="IrbisRule.CheckRecord"/>
         public override RuleReport CheckRecord
             (
                 RuleContext context

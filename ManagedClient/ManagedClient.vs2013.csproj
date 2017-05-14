@@ -76,6 +76,8 @@
   <ItemGroup>
     <Compile Include="AsyncExtensions.cs" />
     <Compile Include="BatchRecordFormatter.cs" />
+    <Compile Include="CharacterClass.cs" />
+    <Compile Include="CharacterClassifier.cs" />
     <Compile Include="ConfigDatabase.cs" />
     <Compile Include="IrbisEncoding.cs" />
     <Compile Include="Output\AbstractOutput.cs" />
@@ -160,7 +162,7 @@
     <Compile Include="Processing\ProcessingResult.cs" />
     <Compile Include="Processing\RecordHandler.cs" />
     <Compile Include="Processing\RecordProcessor.cs" />
-    <Compile Include="Quality\CheckBadCharacters.cs" />
+    <Compile Include="Quality\Rules\CheckBadCharacters.cs" />
     <Compile Include="Quality\FieldDefect.cs" />
     <Compile Include="Quality\IrbisRule.cs" />
     <Compile Include="Quality\RecordReport.cs" />
@@ -171,6 +173,7 @@
     <Compile Include="Quality\Rules\Check610.cs" />
     <Compile Include="Quality\Rules\Check908.cs" />
     <Compile Include="Quality\Rules\CheckEmptySubfields.cs" />
+    <Compile Include="Quality\Rules\CheckMixedCharacters.cs" />
     <Compile Include="Quality\Rules\CheckWhitespace.cs" />
     <Compile Include="Quality\Rules\Require210.cs" />
     <Compile Include="Quality\Rules\Require215.cs" />

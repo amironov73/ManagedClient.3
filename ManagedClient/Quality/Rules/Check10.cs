@@ -1,9 +1,16 @@
-﻿/* Check10.cs -- ISBN и цена.
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
+/* Check10.cs -- ISBN и цена.
  */
 
 #region Using directives
 
 using System.Text.RegularExpressions;
+
+using JetBrains.Annotations;
+
+using MoonSharp.Interpreter;
 
 #endregion
 
@@ -12,6 +19,8 @@ namespace ManagedClient.Quality.Rules
     /// <summary>
     /// ISBN и цена.
     /// </summary>
+    [PublicAPI]
+    [MoonSharpUserData]
     public sealed class Check10
         : IrbisRule
     {
@@ -19,15 +28,19 @@ namespace ManagedClient.Quality.Rules
 
         private void CheckField
             (
-                RecordField field
+                [NotNull] RecordField field
             )
         {
             MustNotContainText(field);
 
             SubField isbn = field.GetFirstSubField('a');
-            if (isbn != null)
+            if (!ReferenceEquals(isbn, null))
             {
-                if (Utilities.SafeContains(isbn.Text, "(", " ", ".", ";", "--"))
+                if (Utilities.SafeContains
+                    (
+                        isbn.Text,
+                        "(", " ", ".", ";", "--"
+                    ))
                 {
                     AddDefect
                         (
@@ -59,11 +72,13 @@ namespace ManagedClient.Quality.Rules
 
         #region IrbisRule members
 
+        /// <inheritdoc cref="IrbisRule.FieldSpec"/>
         public override string FieldSpec
         {
             get { return "10"; }
         }
 
+        /// <inheritdoc cref="IrbisRule.CheckRecord"/>
         public override RuleReport CheckRecord
             (
                 RuleContext context
