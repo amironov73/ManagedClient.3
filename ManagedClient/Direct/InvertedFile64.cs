@@ -108,7 +108,8 @@ namespace ManagedClient.Direct
 
         private long _NodeOffset(int nodeNumber)
         {
-            long result = unchecked(((long)nodeNumber - 1) * NodeLength);
+            long result = (nodeNumber - 1) * (long)NodeLength;
+
             return result;
         }
 
@@ -323,7 +324,7 @@ namespace ManagedClient.Direct
                     //Console.WriteLine(currentNode);
                 }
 
-            FOUND:
+                FOUND:
                 if (goodItem != null)
                 {
                     // ibatrak записи могут иметь ссылки на следующие
@@ -423,7 +424,7 @@ namespace ManagedClient.Direct
                 //Console.WriteLine(currentNode);
             }
 
-        FOUND:
+            FOUND:
             if (goodItem != null)
             {
                 currentNode = ReadLeaf(goodItem.LowOffset);
@@ -464,7 +465,7 @@ namespace ManagedClient.Direct
 
             }
 
-        DONE:
+            DONE:
             return result
                 .Distinct()
                 .ToArray();
