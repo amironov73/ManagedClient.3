@@ -79,6 +79,7 @@
     <Compile Include="CharacterClass.cs" />
     <Compile Include="CharacterClassifier.cs" />
     <Compile Include="ConfigDatabase.cs" />
+    <Compile Include="FastNumber.cs" />
     <Compile Include="IrbisEncoding.cs" />
     <Compile Include="Output\AbstractOutput.cs" />
     <Compile Include="AfterQueryEventArgs.cs" />

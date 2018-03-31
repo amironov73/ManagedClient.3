@@ -671,7 +671,7 @@ namespace ManagedClient
             {
                 result.Append(Text);
             }
-            foreach (SubField subField 
+            foreach (SubField subField
                 in SubFields.OrderBy(sf => sf.CodeString.ToUpperInvariant()))
             {
                 string subText = string.Format
@@ -899,10 +899,10 @@ namespace ManagedClient
         public RecordField Clone()
         {
             RecordField result = new RecordField
-                                     {
-                                         Tag = Tag,
-                                         Text = Text
-                                     };
+            {
+                Tag = Tag,
+                Text = Text
+            };
 
             result.SubFields.AddRange
                 (
