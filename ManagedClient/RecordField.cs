@@ -1065,6 +1065,34 @@ namespace ManagedClient
             return GetEmbeddedFields('1');
         }
 
+        /// <summary>
+        /// Нормализация тега.
+        /// </summary>
+        public static string NormalizeTag
+            (
+                string tag
+            )
+        {
+            string result = tag;
+            while (result.Length < 3)
+            {
+                result = "0" + result;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Означает ли тег фиксированное поле.
+        /// </summary>
+        public static bool IsFixed
+            (
+                string tag
+            )
+        {
+            return tag.StartsWith("00");
+        }
+
         #endregion
 
         #region Object members
