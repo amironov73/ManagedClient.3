@@ -77,6 +77,7 @@
     <Compile Include="BatchRecordFormatter.cs" />
     <Compile Include="CharacterClass.cs" />
     <Compile Include="CharacterClassifier.cs" />
+    <Compile Include="ChunkedBuffer.cs" />
     <Compile Include="ConfigDatabase.cs" />
     <Compile Include="FastNumber.cs" />
     <Compile Include="ImportExport\Iso2709.cs" />
